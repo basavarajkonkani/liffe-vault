@@ -1,0 +1,206 @@
+@tailwind base;
+@tailwind components;
+@tailwind utilities;
+
+@layer base {
+  :root {
+    /* Custom blue theme colors */
+    --background: 0 0% 100%;
+    --foreground: 210 100% 15%;
+    --card: 0 0% 100%;
+    --card-foreground: 210 100% 15%;
+    --popover: 0 0% 100%;
+    --popover-foreground: 210 100% 15%;
+    --primary: 210 100% 40%; /* #0066CC */
+    --primary-foreground: 0 0% 100%;
+    --secondary: 210 40% 96.1%;
+    --secondary-foreground: 210 100% 24%; /* #003D7A */
+    --muted: 210 40% 96.1%;
+    --muted-foreground: 215.4 16.3% 46.9%;
+    --accent: 210 100% 95%; /* #E6F2FF */
+    --accent-foreground: 210 100% 24%;
+    --destructive: 0 84.2% 60.2%;
+    --destructive-foreground: 0 0% 100%;
+    --border: 214.3 31.8% 91.4%;
+    --input: 214.3 31.8% 91.4%;
+    --ring: 210 100% 40%;
+    --radius: 0.5rem;
+  }
+  
+  * {
+    @apply border-border;
+  }
+  
+  body {
+    @apply bg-background text-foreground;
+    font-family: 'Inter', system-ui, -apple-system, sans-serif;
+  }
+  
+  html {
+    scroll-behavior: smooth;
+  }
+}
+
+@layer utilities {
+  /* Glassmorphism utility classes */
+  .glass-card {
+    @apply bg-white/70 backdrop-blur-md border border-white/30 shadow-lg;
+  }
+  
+  .glass-card-strong {
+    @apply bg-white/80 backdrop-blur-lg border border-white/40 shadow-xl;
+  }
+  
+  .glass-card-subtle {
+    @apply bg-white/60 backdrop-blur-sm border border-white/20 shadow-md;
+  }
+  
+  .glass-navbar {
+    @apply bg-white/90 backdrop-blur-xl border-b border-white/40 shadow-sm;
+  }
+  
+  /* Smooth transition utilities */
+  .transition-smooth {
+    @apply transition-all duration-300 ease-in-out;
+  }
+  
+  .transition-smooth-fast {
+    @apply transition-all duration-200 ease-in-out;
+  }
+  
+  .transition-smooth-slow {
+    @apply transition-all duration-500 ease-in-out;
+  }
+  
+  /* Animation utilities */
+  .fade-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  .fade-in-up {
+    animation: fadeInUp 0.3s ease-out;
+  }
+  
+  .slide-in {
+    animation: slideIn 0.3s ease-out;
+  }
+  
+  .slide-in-right {
+    animation: slideInRight 0.3s ease-out;
+  }
+  
+  .scale-in {
+    animation: scaleIn 0.3s ease-out;
+  }
+  
+  .stagger-fade-in {
+    animation: fadeIn 0.3s ease-in;
+  }
+  
+  /* Hover effects */
+  .hover-lift {
+    @apply transition-smooth hover:-translate-y-1 hover:shadow-xl;
+  }
+  
+  .hover-glow {
+    @apply transition-smooth hover:shadow-lg hover:shadow-primary/20;
+  }
+  
+  .hover-scale {
+    @apply transition-smooth hover:scale-105;
+  }
+  
+  .hover-brightness {
+    @apply transition-smooth hover:brightness-110;
+  }
+  
+  /* Touch optimization for mobile */
+  .touch-manipulation {
+    touch-action: manipulation;
+    -webkit-tap-highlight-color: transparent;
+  }
+  
+  /* Loading skeleton */
+  .skeleton {
+    @apply animate-pulse bg-gray-200 rounded;
+  }
+  
+  .skeleton-text {
+    @apply skeleton h-4 w-full;
+  }
+  
+  .skeleton-title {
+    @apply skeleton h-6 w-3/4;
+  }
+  
+  .skeleton-card {
+    @apply skeleton h-32 w-full;
+  }
+  
+  /* Page transition wrapper */
+  .page-transition {
+    animation: pageTransition 0.3s ease-out;
+  }
+}
+
+@keyframes fadeIn {
+  from {
+    opacity: 0;
+  }
+  to {
+    opacity: 1;
+  }
+}
+
+@keyframes fadeInUp {
+  from {
+    opacity: 0;
+    transform: translateY(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}
+
+@keyframes slideIn {
+  from {
+    transform: translateX(-100%);
+  }
+  to {
+    transform: translateX(0);
+  }
+}
+
+@keyframes slideInRight {
+  from {
+    opacity: 0;
+    transform: translateX(20px);
+  }
+  to {
+    opacity: 1;
+    transform: translateX(0);
+  }
+}
+
+@keyframes scaleIn {
+  from {
+    transform: scale(0.95);
+    opacity: 0;
+  }
+  to {
+    transform: scale(1);
+    opacity: 1;
+  }
+}
+
+@keyframes pageTransition {
+  from {
+    opacity: 0;
+    transform: translateY(10px);
+  }
+  to {
+    opacity: 1;
+    transform: translateY(0);
+  }
+}

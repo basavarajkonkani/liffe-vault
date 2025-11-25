@@ -1,0 +1,21 @@
+{
+  "name": "liffe-vault",
+  "version": "1.0.0",
+  "description": "LifeVault is a production-ready digital asset management application that enables users to securely store, manage, and share important documents with designated nominees. Built with banking-grade security and modern web technologies.",
+  "main": "index.js",
+  "scripts": {
+    "test:e2e": "playwright test",
+    "test:e2e:headed": "playwright test --headed",
+    "test:e2e:ui": "playwright test --ui",
+    "test:e2e:debug": "playwright test --debug",
+    "test:e2e:report": "playwright show-report",
+    "test:e2e:codegen": "playwright codegen http://localhost:5173"
+  },
+  "keywords": [],
+  "author": "",
+  "license": "ISC",
+  "type": "commonjs",
+  "devDependencies": {
+    "@playwright/test": "^1.56.1"
+  }
+}
