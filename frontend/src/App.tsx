@@ -1,3 +1,4 @@
+import { lazy, Suspense } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import { useAuthStore } from '@/store/authStore';
@@ -17,6 +18,11 @@ import {
 import { VaultPage, AssetDetailPage, UploadPage } from '@/pages/vault';
 import { NomineeLinkingPage, SharedAssetsPage, SharedAssetDetailPage } from '@/pages/nominee';
 import { AssetsManagementPage } from '@/pages/admin';
+
+// Lazy load Claim Guides pages to avoid module resolution issues
+const ClaimGuidesPage = lazy(() => import('@/pages/claim-guides/ClaimGuidesPage').then(m => ({ default: m.ClaimGuidesPage })));
+const ClaimGuideDetailPage = lazy(() => import('@/pages/claim-guides/ClaimGuideDetailPage').then(m => ({ default: m.ClaimGuideDetailPage })));
+const ClaimGuideFormPage = lazy(() => import('@/pages/claim-guides/ClaimGuideFormPage').then(m => ({ default: m.ClaimGuideFormPage })));
 
 // Component to redirect authenticated users away from auth pages
 const AuthRedirect = ({ children }: { children: React.ReactNode }) => {
@@ -51,7 +57,7 @@ const DashboardRouter = () => {
 
 function App() {
   return (
-    <Router>
+    <Router future={{ v7_startTransition: true, v7_relativeSplatPath: true }}>
       <Routes>
         {/* Default route redirects to PIN login */}
         <Route path="/" element={<Navigate to="/login" replace />} />
@@ -190,6 +196,48 @@ function App() {
           element={
             <ProtectedRoute allowedRoles={['nominee']}>
               <SharedAssetDetailPage />
+            </ProtectedRoute>
+          }
+        />
+        
+        {/* Protected Claim Guides Routes */}
+        <Route
+          path="/claim-guides"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<div className="p-6">Loading...</div>}>
+                <ClaimGuidesPage />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/claim-guides/new"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <Suspense fallback={<div className="p-6">Loading...</div>}>
+                <ClaimGuideFormPage />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/claim-guides/:id"
+          element={
+            <ProtectedRoute>
+              <Suspense fallback={<div className="p-6">Loading...</div>}>
+                <ClaimGuideDetailPage />
+              </Suspense>
+            </ProtectedRoute>
+          }
+        />
+        <Route
+          path="/claim-guides/:id/edit"
+          element={
+            <ProtectedRoute allowedRoles={['admin']}>
+              <Suspense fallback={<div className="p-6">Loading...</div>}>
+                <ClaimGuideFormPage />
+              </Suspense>
             </ProtectedRoute>
           }
         />

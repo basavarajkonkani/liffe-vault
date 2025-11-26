@@ -74,3 +74,27 @@ export interface AuthState {
   logout: () => void;
   setUser: (user: User) => void;
 }
+
+// Claim Guide Interfaces
+export interface ClaimStep {
+  step: number;
+  description: string;
+}
+
+export interface ClaimLink {
+  label: string;
+  url: string;
+}
+
+export interface ClaimGuide {
+  id: string;
+  category: string;
+  title: string;
+  steps: ClaimStep[];
+  documents: string[];
+  contact_info?: string;
+  links?: ClaimLink[];
+  created_at: string;
+  updated_at: string;
+}
+

@@ -1,6 +1,7 @@
 import { supabase } from '../config/supabase';
 import { Asset } from '../types';
 import { logger } from '../utils/logger';
+import { CreateClaimGuideInput, UpdateClaimGuideInput } from '../schemas/claim-guides.schema';
 
 /**
  * Database Service
@@ -1344,5 +1345,156 @@ export async function getSystemStats(): Promise<{
       success: false,
       error: 'An unexpected error occurred',
     };
+  }
+}
+
+
+/**
+ * Claim Guides Service Functions
+ */
+
+/**
+ * Get all claim guides
+ * @returns Array of all claim guides
+ */
+export async function getAllClaimGuides(): Promise<{
+  success: boolean;
+  guides?: any[];
+  error?: string;
+}> {
+  try {
+    const { data, error } = await supabase
+      .from('claim_guides')
+      .select('*')
+      .order('category', { ascending: true });
+
+    if (error) {
+      logger.error('Error fetching claim guides:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, guides: data || [] };
+  } catch (error: any) {
+    logger.error('Error in getAllClaimGuides:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Get a single claim guide by ID
+ * @param guideId - Claim guide ID
+ * @returns Claim guide details
+ */
+export async function getClaimGuideById(guideId: string): Promise<{
+  success: boolean;
+  guide?: any;
+  error?: string;
+}> {
+  try {
+    const { data, error } = await supabase
+      .from('claim_guides')
+      .select('*')
+      .eq('id', guideId)
+      .single();
+
+    if (error) {
+      logger.error('Error fetching claim guide:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, guide: data };
+  } catch (error: any) {
+    logger.error('Error in getClaimGuideById:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Create a new claim guide (Admin only)
+ * @param guideData - Claim guide data
+ * @returns Created claim guide
+ */
+export async function createClaimGuide(guideData: CreateClaimGuideInput): Promise<{
+  success: boolean;
+  guide?: any;
+  error?: string;
+}> {
+  try {
+    const { data, error } = await supabase
+      .from('claim_guides')
+      .insert([guideData])
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Error creating claim guide:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, guide: data };
+  } catch (error: any) {
+    logger.error('Error in createClaimGuide:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Update an existing claim guide (Admin only)
+ * @param guideId - Claim guide ID
+ * @param guideData - Updated claim guide data
+ * @returns Updated claim guide
+ */
+export async function updateClaimGuide(
+  guideId: string,
+  guideData: UpdateClaimGuideInput
+): Promise<{
+  success: boolean;
+  guide?: any;
+  error?: string;
+}> {
+  try {
+    const { data, error } = await supabase
+      .from('claim_guides')
+      .update(guideData)
+      .eq('id', guideId)
+      .select()
+      .single();
+
+    if (error) {
+      logger.error('Error updating claim guide:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true, guide: data };
+  } catch (error: any) {
+    logger.error('Error in updateClaimGuide:', error);
+    return { success: false, error: error.message };
+  }
+}
+
+/**
+ * Delete a claim guide (Admin only)
+ * @param guideId - Claim guide ID
+ * @returns Success status
+ */
+export async function deleteClaimGuide(guideId: string): Promise<{
+  success: boolean;
+  error?: string;
+}> {
+  try {
+    const { error } = await supabase
+      .from('claim_guides')
+      .delete()
+      .eq('id', guideId);
+
+    if (error) {
+      logger.error('Error deleting claim guide:', error);
+      return { success: false, error: error.message };
+    }
+
+    return { success: true };
+  } catch (error: any) {
+    logger.error('Error in deleteClaimGuide:', error);
+    return { success: false, error: error.message };
   }
 }

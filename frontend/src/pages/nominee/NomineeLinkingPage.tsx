@@ -37,10 +37,11 @@ export function NomineeLinkingPage() {
         setIsLoadingAssets(true);
         const response = await api.get<ApiResponse<Asset[]>>('/assets');
         if (response.data.success && response.data.data) {
-          setAssets(response.data.data);
+          setAssets(Array.isArray(response.data.data) ? response.data.data : []);
         }
       } catch (error) {
         console.error('Failed to fetch assets:', error);
+        setAssets([]);
       } finally {
         setIsLoadingAssets(false);
       }
@@ -221,14 +222,14 @@ export function NomineeLinkingPage() {
                   <SelectValue placeholder="Choose an asset..." />
                 </SelectTrigger>
                 <SelectContent>
-                  {assets.map((asset) => (
+                  {Array.isArray(assets) && assets.map((asset) => (
                     <SelectItem key={asset.id} value={asset.id}>
                       {asset.title} ({asset.category})
                     </SelectItem>
                   ))}
                 </SelectContent>
               </Select>
-              {assets.length === 0 && !isLoadingAssets && (
+              {Array.isArray(assets) && assets.length === 0 && !isLoadingAssets && (
                 <p className="text-sm text-muted-foreground">
                   No assets found. Create an asset first.
                 </p>

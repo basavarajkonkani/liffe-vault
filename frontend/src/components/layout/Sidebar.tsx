@@ -6,6 +6,7 @@ import {
   UserPlus,
   FolderOpen,
   X,
+  BookOpen,
 } from 'lucide-react';
 import { useAuthStore } from '../../store/authStore';
 import { Button } from '../ui/button';
@@ -47,6 +48,12 @@ const navItems: NavItem[] = [
     icon: FolderOpen,
     label: 'Shared Assets',
     roles: ['nominee'],
+  },
+  {
+    to: '/claim-guides',
+    icon: BookOpen,
+    label: 'Claim Guides',
+    roles: ['owner', 'nominee', 'admin'],
   },
   {
     to: '/admin/users',

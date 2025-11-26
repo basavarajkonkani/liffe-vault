@@ -483,3 +483,49 @@
   - Verify all sensitive data is in environment variables
   - Test complete application flow one final time
   - _Requirements: 2.3, 3.1, 9.1, 9.3, 14.5, 18.1, 18.2, 18.3, 18.4_
+
+
+## Phase 4: Claim Guides Feature
+
+- [x] 51. Create Claim Guides database schema and migration
+  - Create claim_guides table with id, category, title, steps (JSONB), documents (JSONB), contact_info, links (JSONB)
+  - Add indexes for category lookups
+  - Insert default claim guides for 7 categories: Insurance, Bank Account, Mutual Funds, Fixed Deposits, Property, Digital Wallet, Govt Schemes
+  - Create migration script to apply changes
+  - _Requirements: New feature for nominee support_
+
+- [x] 52. Implement Claim Guides backend API
+  - Create Zod schemas for claim guide validation
+  - Implement database service functions: getAllClaimGuides, getClaimGuideById, createClaimGuide, updateClaimGuide, deleteClaimGuide
+  - Create controller handlers for all CRUD operations
+  - Create routes: GET /claim-guides, GET /claim-guides/:id, POST /claim-guides, PATCH /claim-guides/:id, DELETE /claim-guides/:id
+  - Apply authentication middleware and role-based access (Admin for create/update/delete, all authenticated users for read)
+  - Mount routes in server.ts
+  - _Requirements: New feature for nominee support_
+
+- [x] 53. Build Claim Guides frontend pages
+  - Create ClaimGuidesPage with card-based grid layout showing all guides
+  - Display category icons, title, step count, and document count on each card
+  - Create ClaimGuideDetailPage with step-by-step instructions, required documents, contact info, and helpful links
+  - Implement breadcrumb navigation and smooth transitions
+  - Apply glassmorphism and blue/white premium design system
+  - Add empty state for when no guides exist
+  - _Requirements: 7.1, 7.2, 7.3, 7.4, New feature_
+
+- [x] 54. Build Claim Guides admin management
+  - Create ClaimGuideFormPage for creating and editing guides
+  - Implement dynamic form fields for steps, documents, and links with add/remove functionality
+  - Add form validation for required fields
+  - Implement delete confirmation dialog with AlertDialog component
+  - Add admin-only edit and delete buttons on detail page
+  - Restrict form access to admin role only
+  - _Requirements: 6.4, 16.4, New feature_
+
+- [x] 55. Integrate Claim Guides into navigation and routing
+  - Add "Claim Guides" navigation item to sidebar for all roles (owner, nominee, admin)
+  - Add BookOpen icon from Lucide React
+  - Create routes in App.tsx: /claim-guides, /claim-guides/:id, /claim-guides/new, /claim-guides/:id/edit
+  - Apply role-based route protection (admin for create/edit, all authenticated for view)
+  - Create TypeScript interfaces for ClaimGuide, ClaimStep, ClaimLink
+  - Install @radix-ui/react-alert-dialog dependency
+  - _Requirements: 8.3, New feature_

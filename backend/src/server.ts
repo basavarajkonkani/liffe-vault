@@ -7,6 +7,7 @@ import assetsRoutes from './routes/assets.routes';
 import documentsRoutes from './routes/documents.routes';
 import nomineesRoutes from './routes/nominees.routes';
 import adminRoutes from './routes/admin.routes';
+import claimGuidesRoutes from './routes/claim-guides.routes';
 import { errorHandler } from './middleware/error.middleware';
 
 // Initialize Express app
@@ -54,10 +55,10 @@ app.use(cors(corsOptions));
 app.use(express.json({ limit: '10mb' }));
 app.use(express.urlencoded({ extended: true, limit: '10mb' }));
 
-// Configure rate limiting (100 requests per 15 minutes)
+// Configure rate limiting (more lenient in development)
 const limiter = rateLimit({
   windowMs: 15 * 60 * 1000, // 15 minutes
-  max: 100, // Limit each IP to 100 requests per windowMs
+  max: env.NODE_ENV === 'production' ? 100 : 1000, // 1000 in dev, 100 in production
   message: {
     success: false,
     error: 'Too many requests from this IP, please try again later.',
@@ -85,6 +86,7 @@ app.use('/auth', authRoutes);
 app.use('/assets', assetsRoutes);
 app.use('/nominees', nomineesRoutes);
 app.use('/admin', adminRoutes);
+app.use('/claim-guides', claimGuidesRoutes);
 app.use('/', documentsRoutes); // Document routes include /assets/:id/documents and /documents/:id/download
 
 // 404 handler for undefined routes

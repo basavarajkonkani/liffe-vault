@@ -25,11 +25,14 @@ const NomineeDashboard = () => {
         const response = await api.get<ApiResponse<Asset[]>>('/assets');
         
         if (response.data.success && response.data.data) {
-          setAssets(response.data.data);
-          setFilteredAssets(response.data.data);
+          const assetsData = Array.isArray(response.data.data) ? response.data.data : [];
+          setAssets(assetsData);
+          setFilteredAssets(assetsData);
         }
       } catch (error) {
         console.error('Error fetching shared assets:', error);
+        setAssets([]);
+        setFilteredAssets([]);
         // Error toast is handled by axios interceptor
       } finally {
         setIsLoading(false);
@@ -41,6 +44,11 @@ const NomineeDashboard = () => {
 
   // Filter assets by category
   useEffect(() => {
+    if (!Array.isArray(assets)) {
+      setFilteredAssets([]);
+      return;
+    }
+    
     if (categoryFilter === 'All') {
       setFilteredAssets(assets);
     } else {
@@ -49,12 +57,13 @@ const NomineeDashboard = () => {
   }, [categoryFilter, assets]);
 
   // Calculate statistics
-  const totalSharedAssets = assets.length;
-  const totalDocuments = assets.reduce(
-    (sum, asset) => sum + (asset.documents?.length || 0),
-    0
-  );
-  const uniqueOwners = new Set(assets.map((asset) => asset.owner_id)).size;
+  const totalSharedAssets = Array.isArray(assets) ? assets.length : 0;
+  const totalDocuments = Array.isArray(assets)
+    ? assets.reduce((sum, asset) => sum + (asset.documents?.length || 0), 0)
+    : 0;
+  const uniqueOwners = Array.isArray(assets)
+    ? new Set(assets.map((asset) => asset.owner_id)).size
+    : 0;
 
   // Handle asset card click
   const handleAssetClick = (assetId: string) => {
@@ -62,7 +71,7 @@ const NomineeDashboard = () => {
   };
 
   // Get recent shared assets (last 6)
-  const recentAssets = filteredAssets.slice(0, 6);
+  const recentAssets = Array.isArray(filteredAssets) ? filteredAssets.slice(0, 6) : [];
 
   return (
     <Layout>
@@ -124,7 +133,7 @@ const NomineeDashboard = () => {
         )}
 
         {/* Empty State */}
-        {!isLoading && assets.length === 0 && (
+        {!isLoading && (!Array.isArray(assets) || assets.length === 0) && (
           <div className="text-center py-12 sm:py-16 glass-card rounded-lg fade-in-up">
             <div className="w-20 h-20 sm:w-24 sm:h-24 mx-auto mb-4 sm:mb-6 rounded-full bg-primary/10 flex items-center justify-center">
               <Share2 className="w-10 h-10 sm:w-12 sm:h-12 text-primary" />
@@ -139,7 +148,7 @@ const NomineeDashboard = () => {
         )}
 
         {/* No Results State */}
-        {!isLoading && assets.length > 0 && filteredAssets.length === 0 && (
+        {!isLoading && Array.isArray(assets) && assets.length > 0 && Array.isArray(filteredAssets) && filteredAssets.length === 0 && (
           <div className="text-center py-12 glass-card rounded-lg">
             <FolderOpen className="w-16 h-16 text-gray-400 mx-auto mb-4" />
             <h3 className="text-xl font-semibold text-gray-900 mb-2">
@@ -165,7 +174,7 @@ const NomineeDashboard = () => {
         )}
 
         {/* View All Link */}
-        {!isLoading && filteredAssets.length > 6 && (
+        {!isLoading && Array.isArray(filteredAssets) && filteredAssets.length > 6 && (
           <div className="mt-6 sm:mt-8 text-center">
             <Button
               variant="outline"
