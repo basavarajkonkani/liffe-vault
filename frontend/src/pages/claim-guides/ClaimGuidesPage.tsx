@@ -38,7 +38,6 @@ interface ClaimGuide {
 import { Card, CardContent, CardDescription, CardHeader, CardTitle } from '@/components/ui/card';
 import { Button } from '@/components/ui/button';
 import { useAuthStore } from '@/store/authStore';
-import { toast } from '@/hooks/use-toast';
 
 const categoryIcons: Record<string, React.ElementType> = {
   'Insurance Policy': Shield,
@@ -64,11 +63,16 @@ export const ClaimGuidesPage = () => {
     try {
       setLoading(true);
       const response = await api.get('/claim-guides');
-      if (response.data.success) {
-        setGuides(response.data.data);
+      if (response.data.success && response.data.data) {
+        // Ensure data is an array
+        const guidesData = Array.isArray(response.data.data) 
+          ? response.data.data 
+          : [];
+        setGuides(guidesData);
       }
     } catch (error) {
       console.error('Error fetching claim guides:', error);
+      setGuides([]);
     } finally {
       setLoading(false);
     }

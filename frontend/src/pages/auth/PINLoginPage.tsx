@@ -1,4 +1,4 @@
-import { useState } from 'react';
+import { useState, useCallback } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Button } from '@/components/ui/button';
 import { Input } from '@/components/ui/input';
@@ -13,7 +13,7 @@ type UserRole = 'owner' | 'nominee' | 'admin';
 
 const PINLoginPage = () => {
   const navigate = useNavigate();
-  const { login } = useAuthStore();
+  const login = useAuthStore((state) => state.login);
   
   const [step, setStep] = useState<'role' | 'credentials'>('role');
   const [selectedRole, setSelectedRole] = useState<UserRole | null>(null);
@@ -67,7 +67,7 @@ const PINLoginPage = () => {
   };
 
   // Handle form submission
-  const handleSubmit = async (e: React.FormEvent) => {
+  const handleSubmit = useCallback(async (e: React.FormEvent) => {
     e.preventDefault();
 
     // Validate inputs
@@ -98,24 +98,23 @@ const PINLoginPage = () => {
       if (response.success && response.data) {
         const { user, token } = response.data;
 
-        // Store user and token in Zustand store
+        // Store user and token in Zustand store (this also persists to localStorage)
         login(user, token);
 
         // Show success message
         toast({
           title: 'Login Successful',
-          description: `Welcome back!`,
+          description: `Welcome back, ${user.email}!`,
         });
 
-        // Small delay to ensure state is updated before navigation
+        // Navigate to role-specific dashboard using React Router
+        const dashboardPath = `/dashboard/${user.role}`;
+        
+        // Use setTimeout to ensure state is updated before navigation
         setTimeout(() => {
-          const dashboardPath = `/dashboard/${user.role}`;
-          
-          // Navigate to role-specific dashboard
           navigate(dashboardPath, { replace: true });
         }, 100);
       } else {
-        console.error('Login response not successful:', response); // Debug log
         toast({
           title: 'Login Failed',
           description: 'Invalid response from server.',
@@ -123,18 +122,17 @@ const PINLoginPage = () => {
         });
       }
     } catch (error: any) {
-      console.error('Login error:', error); // Debug log
       toast({
         title: 'Login Failed',
         description: error.response?.data?.error || 'Invalid email or PIN. Please try again.',
         variant: 'destructive',
       });
-      // Clear PIN field
+      // Clear PIN field on error
       setPin('');
     } finally {
       setIsLoading(false);
     }
-  };
+  }, [email, pin, login, navigate]);
 
   return (
     <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700 p-4 sm:p-6">

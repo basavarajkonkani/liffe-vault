@@ -1,4 +1,4 @@
-import { lazy, Suspense } from 'react';
+import { lazy, Suspense, useState, useEffect } from 'react';
 import { BrowserRouter as Router, Routes, Route, Navigate } from 'react-router-dom';
 import { Toaster } from '@/components/ui/toaster';
 import { useAuthStore } from '@/store/authStore';
@@ -26,10 +26,32 @@ const ClaimGuideFormPage = lazy(() => import('@/pages/claim-guides/ClaimGuideFor
 
 // Component to redirect authenticated users away from auth pages
 const AuthRedirect = ({ children }: { children: React.ReactNode }) => {
-  const { isAuthenticated } = useAuthStore();
+  const { isAuthenticated, user } = useAuthStore();
+  const [isInitialized, setIsInitialized] = useState(false);
 
-  if (isAuthenticated) {
-    return <Navigate to="/dashboard" replace />;
+  // Wait for store to initialize from localStorage
+  useEffect(() => {
+    const timer = setTimeout(() => {
+      setIsInitialized(true);
+    }, 50);
+    return () => clearTimeout(timer);
+  }, []);
+
+  // Show loading while initializing to prevent flash
+  if (!isInitialized) {
+    return (
+      <div className="min-h-screen flex items-center justify-center bg-gradient-to-br from-blue-600 via-blue-500 to-blue-700">
+        <div className="text-center">
+          <div className="animate-spin rounded-full h-8 w-8 border-b-2 border-white mx-auto"></div>
+        </div>
+      </div>
+    );
+  }
+
+  if (isAuthenticated && user) {
+    // Redirect to role-specific dashboard
+    const dashboardPath = `/dashboard/${user.role}`;
+    return <Navigate to={dashboardPath} replace />;
   }
 
   return <>{children}</>;

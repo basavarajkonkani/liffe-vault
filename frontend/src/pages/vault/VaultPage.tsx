@@ -22,11 +22,16 @@ const VaultPage = () => {
     const fetchAssets = async () => {
       try {
         setIsLoading(true);
-        const response = await api.get<ApiResponse<Asset[]>>('/assets');
+        const response = await api.get<ApiResponse<{ assets: Asset[] } | Asset[]>>('/assets');
         
         if (response.data.success && response.data.data) {
-          setAssets(response.data.data);
-          setFilteredAssets(response.data.data);
+          // Handle both formats: { assets: [] } or direct array
+          const assetsData = Array.isArray(response.data.data) 
+            ? response.data.data 
+            : (response.data.data as { assets: Asset[] }).assets || [];
+          
+          setAssets(assetsData);
+          setFilteredAssets(assetsData);
         }
       } catch (error) {
         console.error('Error fetching assets:', error);
@@ -41,7 +46,13 @@ const VaultPage = () => {
 
   // Filter assets by search query and category
   useEffect(() => {
-    let filtered = assets;
+    // Ensure assets is an array before filtering
+    if (!Array.isArray(assets)) {
+      setFilteredAssets([]);
+      return;
+    }
+
+    let filtered = [...assets];
 
     // Filter by category
     if (categoryFilter !== 'All') {

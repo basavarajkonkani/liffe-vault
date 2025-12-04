@@ -56,9 +56,12 @@ const AssetsManagementPage = () => {
         );
         
         if (response.data.success && response.data.data) {
-          setAssets(response.data.data.assets);
-          setFilteredAssets(response.data.data.assets);
-          setTotalAssets(response.data.data.total);
+          const assetsData = Array.isArray(response.data.data.assets) 
+            ? response.data.data.assets 
+            : [];
+          setAssets(assetsData);
+          setFilteredAssets(assetsData);
+          setTotalAssets(response.data.data.total || 0);
         }
       } catch (error) {
         console.error('Error fetching assets:', error);
@@ -73,6 +76,12 @@ const AssetsManagementPage = () => {
 
   // Filter and sort assets
   useEffect(() => {
+    // Ensure assets is an array before filtering
+    if (!Array.isArray(assets)) {
+      setFilteredAssets([]);
+      return;
+    }
+
     let result = [...assets];
 
     // Apply search filter
