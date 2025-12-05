@@ -20,6 +20,8 @@ CREATE TABLE IF NOT EXISTS claim_guides (
 CREATE INDEX IF NOT EXISTS idx_claim_guides_category ON claim_guides(category);
 
 -- Create trigger to automatically update updated_at on claim_guides table
+-- Drop existing trigger if it exists to allow re-running migration
+DROP TRIGGER IF EXISTS update_claim_guides_updated_at ON claim_guides;
 CREATE TRIGGER update_claim_guides_updated_at
   BEFORE UPDATE ON claim_guides
   FOR EACH ROW
